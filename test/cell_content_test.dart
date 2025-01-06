@@ -11,6 +11,7 @@ import 'package:table_calendar/table_calendar.dart';
 Widget setupTestWidget(
   DateTime cellDay, {
   CalendarBuilders calendarBuilders = const CalendarBuilders(),
+  CalendarStyle calendarStyle = const CalendarStyle(),
   bool isDisabled = false,
   bool isToday = false,
   bool isWeekend = false,
@@ -23,8 +24,6 @@ Widget setupTestWidget(
   bool isTodayHighlighted = true,
   String? locale,
 }) {
-  final calendarStyle = CalendarStyle();
-
   return Directionality(
     textDirection: TextDirection.ltr,
     child: CellContent(
@@ -316,9 +315,9 @@ void main() {
   });
 
   group('CalendarBuilders Locale test:', () {
-    testWidgets('en locale', (tester) async {
-      final locale = 'en';
-      initializeDateFormatting(locale, null);
+    testWidgets('en locale with default dayTextFormatter', (tester) async {
+      const locale = 'en';
+      initializeDateFormatting(locale);
 
       final cellDay = DateTime.utc(2021, 7, 15);
       await tester.pumpWidget(
@@ -328,19 +327,59 @@ void main() {
         ),
       );
 
-      final dayFinder = find.text(DateFormat.d(locale).format(cellDay));
+      final dayFinder = find.text('${cellDay.day}');
       expect(dayFinder, findsOneWidget);
     });
 
-    testWidgets('ar locale', (tester) async {
-      final locale = 'ar';
-      initializeDateFormatting(locale, null);
+    testWidgets('en locale with custom dayTextFormatter', (tester) async {
+      const locale = 'en';
+      initializeDateFormatting(locale);
 
       final cellDay = DateTime.utc(2021, 7, 15);
       await tester.pumpWidget(
         setupTestWidget(
           cellDay,
           locale: locale,
+          calendarStyle: CalendarStyle(
+            dayTextFormatter: (date, locale) =>
+                DateFormat.d(locale).format(date),
+          ),
+        ),
+      );
+
+      final dayFinder = find.text(DateFormat.d(locale).format(cellDay));
+      expect(dayFinder, findsOneWidget);
+    });
+
+    testWidgets('ar locale with default dayTextFormatter', (tester) async {
+      const locale = 'ar';
+      initializeDateFormatting(locale);
+
+      final cellDay = DateTime.utc(2021, 7, 15);
+      await tester.pumpWidget(
+        setupTestWidget(
+          cellDay,
+          locale: locale,
+        ),
+      );
+
+      final dayFinder = find.text('${cellDay.day}');
+      expect(dayFinder, findsOneWidget);
+    });
+
+    testWidgets('ar locale with custom dayTextFormatter', (tester) async {
+      const locale = 'ar';
+      initializeDateFormatting(locale);
+
+      final cellDay = DateTime.utc(2021, 7, 15);
+      await tester.pumpWidget(
+        setupTestWidget(
+          cellDay,
+          locale: locale,
+          calendarStyle: CalendarStyle(
+            dayTextFormatter: (date, locale) =>
+                DateFormat.d(locale).format(date),
+          ),
         ),
       );
 

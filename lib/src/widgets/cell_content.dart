@@ -3,9 +3,8 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-
-import '../customization/calendar_builders.dart';
-import '../customization/calendar_style.dart';
+import 'package:table_calendar/src/customization/calendar_builders.dart';
+import 'package:table_calendar/src/customization/calendar_style.dart';
 
 class CellContent extends StatelessWidget {
   final DateTime day;
@@ -25,7 +24,7 @@ class CellContent extends StatelessWidget {
   final CalendarBuilders calendarBuilders;
 
   const CellContent({
-    Key? key,
+    super.key,
     required this.day,
     required this.focusedDay,
     required this.calendarStyle,
@@ -41,7 +40,7 @@ class CellContent extends StatelessWidget {
     required this.isHoliday,
     required this.isWeekend,
     this.locale,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -60,11 +59,12 @@ class CellContent extends StatelessWidget {
       );
     }
 
-    final text = DateFormat.d(locale).format(day);
+    final text =
+        calendarStyle.dayTextFormatter?.call(day, locale) ?? '${day.day}';
     final margin = calendarStyle.cellMargin;
     final padding = calendarStyle.cellPadding;
     final alignment = calendarStyle.cellAlignment;
-    final duration = const Duration(milliseconds: 250);
+    const duration = Duration(milliseconds: 250);
 
     if (isDisabled) {
       cell = calendarBuilders.disabledBuilder?.call(context, day, focusedDay) ??
